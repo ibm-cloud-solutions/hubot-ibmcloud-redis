@@ -1,0 +1,36 @@
+{
+	"name": "hubot-ibmcloud-redis",
+	"version": "0.0.1",
+	"classes": [
+		{
+			"class": "slowlog",
+			"description": "Display the slowest queries",
+			"emittarget": "redis.slowlog.js",
+			"texts": [
+				"What are the slowest queries?",
+				"Show me the slow log",
+				"How is Redis performing?"
+			]
+		},
+		{
+			"class": "ttls",
+			"description": "Display the number of keys without TTLs",
+			"emittarget": "redis.nottls.js",
+			"texts": [
+				"How many keys do not have TTLs?",
+				"How many keys don't have an expiration?",
+				"How many keys don't expire?"
+			]
+		},
+		{
+			"class": "monitorttls",
+			"description": "Monitor the number of keys without TTLs",
+			"emittarget": "redis.nottls.js",
+			"texts": [
+				"Can you keep track of the number of keys without TTLs?",
+				"Monitor non-expiring key growth",
+				"How are non-expiring keys changing over time?"
+			]
+		}
+	]
+}
