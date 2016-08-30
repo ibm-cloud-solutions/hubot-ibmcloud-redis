@@ -6,21 +6,9 @@
   */
 'use strict';
 
-var Redis = require('ioredis');
-
 var path = require('path');
 var TAG = path.basename(__filename);
-
-const REDIS_HOST = process.env.HUBOT_IBMCLOUD_REDIS_HOST;
-const REDIS_PORT = process.env.HUBOT_IBMCLOUD_REDIS_PORT;
-
-// TODO checking to make sure env variables are set -- where is the best place to do this?
-// TODO do we need a password?
-
-var redis = new Redis({
-	port: REDIS_PORT,
-	host: REDIS_HOST
-});
+var redis = require('../lib/redis.js')();
 
 
 const SLOWLOG = /redis slowlog/i;
@@ -41,27 +29,38 @@ module.exports = (robot) => {
 
 	function processSlowLog(res) {
 		robot.logger.debug(`${TAG}: redis.slowlog - About to retrieve slowlog results.`);
-		redis.slowlog('GET', 10).then(function(result) {
-			robot.logger.debug(`${TAG}: redis.slowlog - Retrieved slowlog results.`);
-			var attachments = result.map(function(obj) {
+		if (redis) {
+			redis.slowlog('GET', 10).then(function(result) {
+				robot.logger.debug(`${TAG}: redis.slowlog - Retrieved slowlog results.`);
+				var attachments = result.map(function(obj) {
 
-				const attachment = {
-					title: 'Entry ' + obj[0]
-				};
+					const attachment = {
+						title: 'Entry ' + obj[0]
+					};
 
-				robot.logger.debug(`${TAG}: redis.slowlog entry ` + obj[0]);
-				attachment.fields = [
-					{title: 'Timestamp', value: obj[1]},
-					{title: 'Microseconds for Execution', value: obj[2]},
-					{title: 'Command', value: JSON.stringify(obj[3])}
-				];
+					robot.logger.debug(`${TAG}: redis.slowlog entry ` + obj[0]);
+					attachment.fields = [
+						{title: 'Timestamp', value: obj[1]},
+						{title: 'Microseconds for Execution', value: obj[2]},
+						{title: 'Command', value: JSON.stringify(obj[3])}
+					];
 
-				return attachment;
+					return attachment;
+				});
+				robot.emit('ibmcloud.formatter', {
+					response: res, attachments: attachments
+				});
 			});
+		}
+		else {
+			// redis has not been configured
+			var message = 'I haven\'t been configured to work with Redis. The following environment variables should be set: HUBOT_IBMCLOUD_REDIS_HOST, HUBOT_IBMCLOUD_REDIS_PORT.';
+			robot.logger.error(`${TAG}: ${message}`);
 			robot.emit('ibmcloud.formatter', {
-				response: res, attachments: attachments
+				response: res,
+				message: message
 			});
-		});
+		}
 
 	}
 };
