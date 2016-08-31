@@ -6,7 +6,6 @@
   */
 'use strict';
 
-var Redis = require('ioredis');
 const utils = require('hubot-ibmcloud-utils').utils;
 const Conversation = require('hubot-conversation');
 
@@ -30,24 +29,14 @@ var i18n = new (require('i18n-2'))({
 // At some point we need to toggle this setting based on some user input.
 i18n.setLocale('en');
 
-const REDIS_HOST = process.env.HUBOT_IBMCLOUD_REDIS_HOST;
-const REDIS_PORT = process.env.HUBOT_IBMCLOUD_REDIS_PORT;
 
-// TODO checking to make sure env variables are set -- where is the best place to do this?
-// TODO do we need a password?
-
-var redis = new Redis({
-	port: REDIS_PORT,
-	host: REDIS_HOST
-});
+var redis = require('../lib/redis.js')();
 
 var currentResponse;
-
 var previousKeyNumber;
 
 const ALERT_FREQUENCY = 60 * 60 * 1000;
 var alertFrequency = ALERT_FREQUENCY;
-
 
 const NOTTLS = /redis check ttls/i;
 const MONITOR_NOTTLS = /redis monitor ttls/i;
@@ -90,53 +79,75 @@ module.exports = (robot) => {
 	}
 
 	function processMonitorNoTtls(res, frequency) {
-		// need to store the res so that we are in the right room for this user
-		processNoTtlsWrapper(res, true);
-		// initialize contexts
-		if (res) {
-			currentResponse = res;
+		if (redis) {
+			// need to store the res so that we are in the right room for this user
+			processNoTtlsWrapper(res, true);
+			// initialize contexts
+			if (res) {
+				currentResponse = res;
+			}
+
+			if (frequency) {
+				alertFrequency = frequency * 60 * 60 * 1000;
+			}
+
+			robot.emit('ibmcloud.formatter', {
+				response: currentResponse,
+				message: 'Will check again in ' + alertFrequency / (60 * 60 * 1000) + ' hours'
+			});
+
+			setTimeout(processMonitorNoTtls, alertFrequency);
 		}
-
-		if (frequency) {
-			alertFrequency = frequency * 60 * 60 * 1000;
+		else {
+			// redis has not been configured
+			var message = 'I haven\'t been configured to work with Redis. The following environment variables should be set: HUBOT_IBMCLOUD_REDIS_HOST, HUBOT_IBMCLOUD_REDIS_PORT.';
+			robot.logger.error(`${TAG}: ${message}`);
+			robot.emit('ibmcloud.formatter', {
+				response: res,
+				message: message
+			});
 		}
-
-		robot.emit('ibmcloud.formatter', {
-			response: currentResponse,
-			message: 'Will check again in ' + alertFrequency / (60 * 60 * 1000) + ' hours'
-		});
-
-		setTimeout(processMonitorNoTtls, alertFrequency);
 	}
 
 	function processNoTtlsWrapper(res, isMonitoring) {
-		robot.logger.debug(`${TAG}: Processing no ttls wrapper`);
-		if (!res) {
-			res = currentResponse;
-		}
-
-		processNoTtls(res).then(function(result) {
-			console.log('processNoTtls');
-			robot.emit('ibmcloud.formatter', {
-				response: res,
-				message: 'There are currently ' + result + ' keys without TTLs.'
-			});
-
-			if (isMonitoring) {
-				if (previousKeyNumber) {
-					robot.emit('ibmcloud.formatter', {
-						response: res,
-						message: 'There were previously ' + previousKeyNumber + ' keys without TTLs.  This is a change of ' + (result - previousKeyNumber) / 100 + ' percent over the last ' + alertFrequency + ' hours.'
-					});
-				}
-				previousKeyNumber = result;
+		if (redis) {
+			robot.logger.debug(`${TAG}: Processing no ttls wrapper`);
+			if (!res) {
+				res = currentResponse;
 			}
-		}).catch(function(err) {
+
+			processNoTtls(res).then(function(result) {
+				console.log('processNoTtls');
+				robot.emit('ibmcloud.formatter', {
+					response: res,
+					message: 'There are currently ' + result + ' keys without TTLs.'
+				});
+
+				if (isMonitoring) {
+					if (previousKeyNumber) {
+						robot.emit('ibmcloud.formatter', {
+							response: res,
+							message: 'There were previously ' + previousKeyNumber + ' keys without TTLs.  This is a change of ' + (result - previousKeyNumber) / 100 + ' percent over the last ' + alertFrequency + ' hours.'
+						});
+					}
+					previousKeyNumber = result;
+				}
+			}).catch(function(err) {
+				robot.emit('ibmcloud.formatter', {
+					response: res,
+					message: 'An error occurred: ' + err
+				});
+			});
+		}
+		else {
+			// redis has not been configured
+			var message = 'I haven\'t been configured to work with Redis. The following environment variables should be set: HUBOT_IBMCLOUD_REDIS_HOST, HUBOT_IBMCLOUD_REDIS_PORT.';
+			robot.logger.error(`${TAG}: ${message}`);
 			robot.emit('ibmcloud.formatter', {
 				response: res,
-				message: 'An error occurred: ' + err
+				message: message
 			});
-		});
+		}
 	}
 
 	function processNoTtls(res) {
