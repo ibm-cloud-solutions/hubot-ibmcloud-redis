@@ -26,9 +26,11 @@ describe('Test test via Slack', function() {
 	beforeEach(function() {
 
 		var MockRedis = sinon.stub();
-//		var MockStream = sinon.stub();
+		var MockStream = sinon.stub();
+
+		var testStream = new MockStream();
 		Redis.prototype.slowlog = sinon.stub().returns(Promise.resolve([[1, 1471964017, 1099, ['info']]]));
-	//	Redis.prototype.scanStream = sinon.stub().returns(new MockStream());
+		Redis.prototype.scanStream = sinon.stub().returns(testStream);
 
 		// MockStream.prototype.on = sinon.stub();
 
