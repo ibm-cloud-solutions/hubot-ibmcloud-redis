@@ -26,8 +26,27 @@ describe('Test test via Slack', function() {
 	beforeEach(function() {
 
 		var MockRedis = sinon.stub();
-
 		Redis.prototype.slowlog = sinon.stub().returns(Promise.resolve([[1, 1471964017, 1099, ['info']]]));
+		Redis.prototype.scanStream = () => {
+			var scan = {};
+			scan.on = (event, callback) => {
+				if (event === 'data'){
+					callback(['key1', 'key2']);
+				}
+				else {
+					callback();
+				}
+			};
+			return scan;
+		};
+		Redis.prototype.ttl = (key) => {
+			if (key === 'key1') {
+				return Promise.resolve(-1);
+			}
+			else {
+				return Promise.resolve(200);
+			}
+		};
 
 		var redis = new MockRedis();
 		slowLog.__set__('redis', redis);
@@ -61,5 +80,14 @@ describe('Test test via Slack', function() {
 
 		});
 
+	});
+
+	context('ttls', function() {
+		it('should retrieve ttls', function() {
+			return room.user.say('mimiron', '@hubot redis check ttls').then(() => {
+				let response = room.messages[room.messages.length - 1];
+				expect(response).to.eql(['hubot', '@mimiron There are currently 1 keys without TTLs.']);
+			});
+		});
 	});
 });
