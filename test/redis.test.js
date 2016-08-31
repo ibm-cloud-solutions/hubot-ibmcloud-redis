@@ -26,11 +26,8 @@ describe('Test test via Slack', function() {
 	beforeEach(function() {
 
 		var MockRedis = sinon.stub();
-//		var MockStream = sinon.stub();
-		Redis.prototype.slowlog = sinon.stub().returns(Promise.resolve([[1, 1471964017, 1099, ['info']]]));
-	//	Redis.prototype.scanStream = sinon.stub().returns(new MockStream());
 
-		// MockStream.prototype.on = sinon.stub();
+		Redis.prototype.slowlog = sinon.stub().returns(Promise.resolve([[1, 1471964017, 1099, ['info']]]));
 
 		var redis = new MockRedis();
 		slowLog.__set__('redis', redis);
@@ -65,13 +62,4 @@ describe('Test test via Slack', function() {
 		});
 
 	});
-
-	context('ttls', function() {
-		it('should retrieve ttls', function() {
-			return room.user.say('mimiron', '@hubot redis check ttls').then(() => {
-				// let response = room.messages[room.messages.length - 1];
-			});
-		});
-	});
-
 });

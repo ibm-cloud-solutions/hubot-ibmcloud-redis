@@ -11,7 +11,7 @@
     "start": "source config/env && hubot -a shell",
     "slack": "source config/env && hubot -a slack",
     "facebook": "source config/env && hubot -a fb",
-		"postinstall": "initDb src/nlc/NLC.json",
+    "postinstall": "initDb src/nlc/NLC.json",
     "lint": "eslint src/**/*.js test/*.js index.js",
     "test": ". test/.env && mocha test",
     "coverage": ". test/.env && istanbul cover -x '**/coverage/**' -x '**/tools/**' --include-all-sources --report lcov --report cobertura --report text --dir ./gh-pages/coverage _mocha -- test"
@@ -37,8 +37,8 @@
     "hubot-fb": "^3.0.0",
     "hubot-help": "^0.2.0",
     "hubot-shell": "^1.0.2",
-		"hubot-ibmcloud-auth": ">=0.0.8",
-		"hubot-ibmcloud-nlc": ">=0.0.20",
+    "hubot-ibmcloud-auth": ">=0.0.8",
+    "hubot-ibmcloud-nlc": ">=0.0.20",
     "hubot-slack": "^4.0.2",
     "hubot-test-helper": "^1.4.4",
     "istanbul": "0.4.0",
@@ -61,6 +61,9 @@
   ],
   "dependencies": {
 		"hubot-ibmcloud-cognitive-lib": ">=0.0.19",
-		"ioredis": "^2.3.0"
+		"ioredis": "^2.3.0",
+		"hubot-ibmcloud-utils": ">=0.0.8",
+                "hubot-conversation": "^1.1.1",
+		"i18n-2": "^0.6.3"
 	}
 }
