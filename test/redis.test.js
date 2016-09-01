@@ -109,7 +109,7 @@ describe('Test test via Slack', function() {
 			});
 		});
 
-		it('should enable monitoring of ttls', function() {
+		it('should enable and disable monitoring of ttls', function() {
 			return room.user.say('mimiron', '@hubot redis monitor ttls').then(() => {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('monitor.ttls.prompt')]);
@@ -119,6 +119,10 @@ describe('Test test via Slack', function() {
 				let current = room.messages[room.messages.length - 1];
 				expect(rate).to.eql(['hubot', '@mimiron ' + i18n.__('redis.ttl.enable.monitor', 1)]);
 				expect(current).to.eql(['hubot', '@mimiron ' + i18n.__('redis.ttl.result', 1)]);
+				return room.user.say('mimiron', '@hubot redis monitor cancel');
+			}).then(() => {
+				let response = room.messages[room.messages.length - 1];
+				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('redis.ttl.disable.monitor')]);
 			});
 		});
 

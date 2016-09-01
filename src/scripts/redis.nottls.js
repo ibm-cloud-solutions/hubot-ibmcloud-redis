@@ -34,15 +34,17 @@ var redis = require('../lib/redis.js')();
 
 var currentResponse;
 var previousKeyNumber;
+var currentMonitor;
 
 const ALERT_FREQUENCY = 60 * 60 * 1000;
 var alertFrequency = ALERT_FREQUENCY;
 
 const NOTTLS = /redis check ttls/i;
 const MONITOR_NOTTLS = /redis monitor ttls/i;
+const MONITOR_CANCEL = /redis monitor cancel/i;
 
 
-var redisNotConfigured = function (res, robot) {
+var redisNotConfigured = function(res, robot) {
 	// redis has not been configured
 	var message = i18n.__('redis.not.configured');
 	robot.logger.error(`${TAG}: ${message}`);
@@ -80,6 +82,38 @@ module.exports = (robot) => {
 		processMonitorNoTtlsWrapper(res);
 	});
 
+	// Natural Language match
+	robot.on('redis.monitor.cancel', (res, parameters) => {
+		robot.logger.debug(`${TAG}: redis.monitor.cancel - Natural Language match - res.message.text=${res.message.text}.`);
+		processMonitorCancel(res);
+	});
+
+	// RegEx match
+	robot.respond(MONITOR_CANCEL, {id: 'redis.monitor.cancel'}, function(res) {
+		robot.logger.debug(`${TAG}: redis.monitor.cancel - RegEx match - res.message.text=${res.message.text}.`);
+		processMonitorCancel(res);
+	});
+
+	function processMonitorCancel(res) {
+		if (currentMonitor) {
+			clearTimeout(currentMonitor);
+			currentMonitor = undefined;
+			previousKeyNumber = undefined;
+			var message = i18n.__('redis.ttl.disable.monitor');
+			robot.emit('ibmcloud.formatter', {
+				response: res,
+				message: message
+			});
+		}
+		else {
+			var message2 = i18n.__('redis.ttl.disable.no.monitor');
+			robot.emit('ibmcloud.formatter', {
+				response: res,
+				message: message2
+			});
+		}
+	}
+
 	function processMonitorNoTtlsWrapper(res) {
 		// ask how long they would like the monitoring period to be
 		let prompt = i18n.__('monitor.ttls.prompt');
@@ -108,7 +142,7 @@ module.exports = (robot) => {
 				message: message
 			});
 
-			setInterval(processMonitorNoTtls, alertFrequency);
+			currentMonitor = setInterval(processMonitorNoTtls, alertFrequency);
 		}
 		else {
 			// redis has not been configured
@@ -133,7 +167,7 @@ module.exports = (robot) => {
 				if (isMonitoring) {
 					if (previousKeyNumber) {
 						let percent = (result - previousKeyNumber) / 100;
-						var msg = i18n.__('redis.ttl.percentage', previousKeyNumber, percent, alertFrequency);
+						var msg = i18n.__('redis.ttl.percentage', previousKeyNumber, percent, (alertFrequency / ALERT_FREQUENCY));
 						robot.emit('ibmcloud.formatter', {
 							response: res,
 							message: msg

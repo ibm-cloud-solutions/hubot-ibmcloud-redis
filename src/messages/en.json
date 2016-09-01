@@ -5,6 +5,8 @@
 	"redis.ttl.percentage": "There were previously %s keys without TTLs.  This is a change of %s percent over the last %s hours.",
 	"redis.ttl.result": "There are currently %s keys without TTLs.",
 	"redis.ttl.enable.monitor": "I will check again every %s hours",
+	"redis.ttl.disable.monitor": "I will no longer check for keys without TTLs.",
+	"redis.ttl.disable.no.monitor": "I was not checking for keys without TTLs.",
 	"redis.slowlog.title": "Entry %s",
 	"redis.slowlog.timestamp": "Timestamp",
 	"redis.slowlog.execution.time": "Microseconds for Execution",
