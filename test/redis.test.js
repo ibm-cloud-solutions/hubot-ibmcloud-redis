@@ -131,6 +131,8 @@ describe('Test test via Slack', function() {
 
 		it('should delete keys without ttls', function() {
 			return room.user.say('mimiron', '@hubot redis delete nottls').then(() => {
+				return waitForMessageQueue(room, 1);
+			}).then(() => {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('redis.deleted.number', 1)]);
 			});
