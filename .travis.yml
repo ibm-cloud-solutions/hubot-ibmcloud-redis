@@ -4,6 +4,8 @@ node_js:
 env:
   global:
     - GHE_TOKEN=1f0c21eb2e892c7ef171d2158dc16c40491e8aec
+services:
+  - redis-server
 before_install:
   - 'echo "@ibm:registry=http://bot-npm.ng.bluemix.net/" > .npmrc'
   - 'echo -e "@bms:registry=http://bot-npm.ng.bluemix.net/" >> .npmrc'
@@ -13,7 +15,5 @@ install:
 script:
   - 'npm run lint'
   - 'npm run coverage'
-after_script:
-  - 'if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then npm run release && npm publish; fi'
 notifications:
   slack: 'cloudplatform:U0WlAkB6qDOP7iWYOtYCxSj0'
