@@ -7,20 +7,22 @@
 'use strict';
 
 var Redis = require('ioredis');
-
-
 const REDIS_HOST = process.env.HUBOT_IBMCLOUD_REDIS_HOST;
 const REDIS_PORT = process.env.HUBOT_IBMCLOUD_REDIS_PORT;
-// TODO do we need a password?
+const REDIS_PASSWORD = process.env.HUBOT_IBMCLOUD_REDIS_PASSWORD;
 
 
 module.exports = () => {
 	var redis;
 	if (REDIS_HOST && REDIS_PORT) {
-		redis = new Redis({
+		var redisConfig = {
 			port: REDIS_PORT,
 			host: REDIS_HOST
-		});
+		};
+		if (REDIS_PASSWORD) {
+			redisConfig.password = REDIS_PASSWORD;
+		}
+		redis = new Redis(redisConfig);
 	}
 	return redis;
 };

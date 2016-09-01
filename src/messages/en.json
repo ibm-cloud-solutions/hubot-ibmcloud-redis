@@ -1,0 +1,12 @@
+{
+	"monitor.ttls.prompt": "How often would you like me to check for keys without Time To Live values (in hours)?",
+	"redis.not.configured": "I haven't been configured to work with Redis. The following environment variables should be set: HUBOT_IBMCLOUD_REDIS_HOST, HUBOT_IBMCLOUD_REDIS_PORT.",
+	"redis.error": "An error occurred while: %s",
+	"redis.ttl.percentage": "There were previously %s keys without TTLs.  This is a change of %s percent over the last %s hours.",
+	"redis.ttl.result": "There are currently %s keys without TTLs.",
+	"redis.ttl.enable.monitor": "I will check again every %s hours",
+	"redis.slowlog.title": "Entry %s",
+	"redis.slowlog.timestamp": "Timestamp",
+	"redis.slowlog.execution.time": "Microseconds for Execution",
+	"redis.slowlog.command": "Command"
+}

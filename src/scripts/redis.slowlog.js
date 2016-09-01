@@ -10,6 +10,22 @@ var path = require('path');
 var TAG = path.basename(__filename);
 var redis = require('../lib/redis.js')();
 
+// --------------------------------------------------------------
+// i18n (internationalization)
+// It will read from a peer messages.json file.  Later, these
+// messages can be referenced throughout the module.
+// --------------------------------------------------------------
+var i18n = new (require('i18n-2'))({
+	locales: ['en'],
+	extension: '.json',
+	// Add more languages to the list of locales when the files are created.
+	directory: __dirname + '/../messages',
+	defaultLocale: 'en',
+	// Prevent messages file from being overwritten in error conditions (like poor JSON).
+	updateFiles: false
+});
+// At some point we need to toggle this setting based on some user input.
+i18n.setLocale('en');
 
 const SLOWLOG = /redis slowlog/i;
 
@@ -34,15 +50,16 @@ module.exports = (robot) => {
 				robot.logger.debug(`${TAG}: redis.slowlog - Retrieved slowlog results.`);
 				var attachments = result.map(function(obj) {
 
+					var title = i18n.__('redis.slowlog.title', obj[0]);
 					const attachment = {
-						title: 'Entry ' + obj[0]
+						title: title
 					};
 
 					robot.logger.debug(`${TAG}: redis.slowlog entry ` + obj[0]);
 					attachment.fields = [
-						{title: 'Timestamp', value: obj[1]},
-						{title: 'Microseconds for Execution', value: obj[2]},
-						{title: 'Command', value: JSON.stringify(obj[3])}
+						{title: i18n.__('redis.slowlog.timestamp'), value: obj[1]},
+						{title: i18n.__('redis.slowlog.execution.time'), value: obj[2]},
+						{title: i18n.__('redis.slowlog.command'), value: JSON.stringify(obj[3])}
 					];
 
 					return attachment;
@@ -54,7 +71,7 @@ module.exports = (robot) => {
 		}
 		else {
 			// redis has not been configured
-			var message = 'I haven\'t been configured to work with Redis. The following environment variables should be set: HUBOT_IBMCLOUD_REDIS_HOST, HUBOT_IBMCLOUD_REDIS_PORT.';
+			var message = i18n.__('redis.not.configured');
 			robot.logger.error(`${TAG}: ${message}`);
 			robot.emit('ibmcloud.formatter', {
 				response: res,
