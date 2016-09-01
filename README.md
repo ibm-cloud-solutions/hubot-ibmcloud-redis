@@ -1,56 +1,56 @@
-[![Build Status](https://travis.innovate.ibm.com/BluemixSolutions/hubot-ibmcloud-scrtipt-skeleton.svg?token=Gn7Cdz9YEJSDvAVxXAUD&branch=master)](https://travis.innovate.ibm.com/BluemixSolutions/hubot-ibmcloud-scrtipt-skeleton)
-[![Coverage Status](https://pages.github.ibm.com/BluemixSolutions/hubot-ibmcloud-scrtipt-skeleton/coverage/badge.svg)](https://pages.github.ibm.com/BluemixSolutions/hubot-ibmcloud-scrtipt-skeleton/coverage/lcov-report/index.html)
+[![Build Status](https://travis-ci.org/ibm-cloud-solutions/hubot-ibmcloud-redis.svg?branch=master)](https://travis-ci.org/ibm-cloud-solutions/hubot-ibmcloud-redis)
+[![Coverage Status](https://coveralls.io/repos/github/ibm-cloud-solutions/hubot-ibmcloud-redis/badge.svg?branch=master)](https://coveralls.io/github/ibm-cloud-solutions/hubot-ibmcloud-redis?branch=master)
+[![Dependency Status](https://dependencyci.com/github/ibm-cloud-solutions/hubot-ibmcloud-redis/badge)](https://dependencyci.com/github/ibm-cloud-solutions/hubot-ibmcloud-redis)
+[![npm](https://img.shields.io/npm/v/hubot-ibmcloud-redis.svg?maxAge=2592000)](https://www.npmjs.com/package/hubot-ibmcloud-redis)
 
-# hubot-ibmcloud-script-skeleton
+# hubot-ibmcloud-redis
 
-Starting point for your new hubot script.  Clone this project and start editing.
-
-_Note_:  This project makes use of internal forks of public packages, privately hosted on a secured private npm registry until we can deliver the work back to the open source community.  In order to run this project you will need to set up a `.npmrc` file.  [See our wiki for more information](https://github.ibm.com/BluemixSolutions/BluemixSolutions/wiki/.npmrc-and-npm-auth-tokens)
+A hubot script for monitoring your use of Redis.
 
 ## Getting Started
   * [Usage](#usage)
   * [Commands](#commands)
-  * [Provision on Bluemix](#provision-on-bluemix)
-  * [Hubot Adapter setup](#hubot-adapter-setup)
+  * [Hubot Adapter Setup](#hubot-adapter-setup)
+  * [Cognitive Setup](#cognitive-setup)
   * [Development](#development)
+  * [License](#license)
+  * [Contribute](#contribute)
 
-## Usage <a id="usage"></a>
+## Usage
 
 If you are new to Hubot visit the [getting started](https://hubot.github.com/docs/) content to get a basic bot up and running.  Next, follow these steps for adding this external script into your hubot:
 
 1. `cd` into your hubot directory
-2. Install this package via `npm install @ibm/hubot-ibmcloud-script-skeleton --save`
-3. Add `@ibm/hubot-ibmcloud-script-skeleton` to your `external-scripts.json`
+2. Install this package via `npm install @ibm/hubot-ibmcloud-redis --save`
+3. Add `@ibm/hubot-ibmcloud-redis` to your `external-scripts.json`
 4. Add the necessary environment variables:
 ```
-export HUBOT_ENVIRNMENT_VARIABLE=<Variable Value>
+export HUBOT_IBMCLOUD_REDIS_HOST=<Redis server hostname>
+export HUBOT_IBMCLOUD_REDIS_PORT=<Redis server port>
+export HUBOT_IBMCLOUD_REDIS_PASSWORD=<Optional -- Redis server password>
 ```
 
 5. Start up your bot & off to the races!
 
 
-## Commands <a id="commands"></a>
+## Commands
 
-- `hubot command` - command description.
+- `hubot redis check ttls` - Check to see if keys exist without a defined expiration.
+- `hubot redis monitor ttls` - Monitor keys regularly to see if any are defined without an expiration.
+- `hubot redis monitor cancel` - Disable the monitoring of Redis.
+- `hubot redis slowlog` - Check Redis for any slow running commands.
 
-## Provision on Bluemix <a id="provision-on-bluemix"></a>
-
-Get a bot with these features and more up and running on the IBM Cloud.
-Harness the power of ChatOps and control your cloud.
-
-![Configure Hubot](/docs/images/Bluemix_Solutions.png)
-
-Just step through a simple configuration wizard in order to provision your own bot on Bluemix.
-
-Deploy your bot now by visiting [cloudbots.stage1.ng.bluemix.net](http://cloudbots.stage1.ng.bluemix.net/).
-
-## Hubot Adapter setup <a id="hubot-adapter-setup"></a>
+## Hubot Adapter setup
 
 Hubot supports a variety of adapters to connect to popular chat clients.  For more feature rich experiences you can setup the following adapters:
-- [Slack setup](./docs/adapters/slack.md)
-- [Facebook Messenger setup](./docs/adapters/facebook.md)
+- [Slack setup](https://github.com/ibm-cloud-solutions/hubot-ibmcloud-redis/blob/master/docs/adapters/slack.md)
+- [Facebook Messenger setup](https://github.com/ibm-cloud-solutions/hubot-ibmcloud-redis/blob/master/docs/adapters/facebook.md)
 
-## Development <a id="development"></a>
+## Cognitive Setup
+
+This project supports natural language interactions using Watson and other Bluemix services.  For more information on enabling these features, refer to [Cognitive Setup](https://github.com/ibm-cloud-solutions/hubot-ibmcloud-nlc/blob/master/docs/cognitiveSetup.md).
+
+## Development
 
 Please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) before starting any work.  Steps for running this script for development purposes:
 
@@ -60,7 +60,9 @@ Please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) before starting any wor
 - create `env` in the `config` folder
 - `env` contents:
 ```
-export HUBOT_ENVIRNMENT_VARIABLE=<Variable Value>
+export HUBOT_IBMCLOUD_REDIS_HOST=<Redis server hostname>
+export HUBOT_IBMCLOUD_REDIS_PORT=<Redis server port>
+export HUBOT_IBMCLOUD_REDIS_PASSWORD=<Optional -- Redis server password>
 ```
 
 In order to view content in chat clients you will need to add `@ibm/hubot-ibmcloud-formatter` to your `external-scripts.json` file. Additionally, if you want to use `hubot-help` to make sure your command documentation is correct:
@@ -80,14 +82,14 @@ Hubot supports a variety of adapters to connect to popular chat clients.
 
 If you just want to use:
  - Terminal: run `npm run start`
- - [Slack: link to setup instructions](docs/adapters/slack.md)
- - [Facebook Messenger: link to setup instructions](docs/adapters/facebook.md)
+ - [Slack: link to setup instructions](https://github.com/ibm-cloud-solutions/hubot-ibmcloud-redis/blob/master/docs/adapters/slack.md)
+ - [Facebook Messenger: link to setup instructions](https://github.com/ibm-cloud-solutions/hubot-ibmcloud-redis/blob/master/docs/adapters/facebook.md)
 
 
 ## License
 
-See [LICENSE.txt](./LICENSE.txt) for license information.
+See [LICENSE.txt](https://github.com/ibm-cloud-solutions/hubot-ibmcloud-redis/blob/master/LICENSE.txt) for license information.
 
 ## Contribute
 
-Please check out our [Contributing Guidelines](./CONTRIBUTING.md) for detailed information on how you can lend a hand.
+Please check out our [Contributing Guidelines](https://github.com/ibm-cloud-solutions/hubot-ibmcloud-redis/blob/master/CONTRIBUTING.md) for detailed information on how you can lend a hand.
