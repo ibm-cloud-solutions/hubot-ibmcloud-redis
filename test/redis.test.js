@@ -9,9 +9,12 @@
 var Redis = require('ioredis');
 const Helper = require('hubot-test-helper');
 const helper = new Helper('../src/scripts');
+const sprinkles = require('mocha-sprinkles');
 var rewire = require('rewire');
 var sinon = require('sinon');
 const expect = require('chai').expect;
+
+var redis = require('../src/lib/redis.js')();
 
 var slowLog = rewire('../src/scripts/redis.slowlog.js');
 var ttls = rewire('../src/scripts/redis.nottls.js');
@@ -28,15 +31,21 @@ var i18n = new (require('i18n-2'))({
 // At some point we need to toggle this setting based on some user input.
 i18n.setLocale('en');
 
+// Length of time to wait for a message
+const timeout = 1000;
+
+
 // Passing arrow functions to mocha is discouraged: https://mochajs.org/#arrow-functions
 // return promises from mocha tests rather than calling done() - http://tobyho.com/2015/12/16/mocha-with-promises/
 describe('Test test via Slack', function() {
 
 	let room;
 
-	before(() => {
+	before((done) => {
 		setupSlowLogsRedis();
-		setupNoTTLsRedis();
+		setupNoTTLsRedis().then(function() {
+			done();
+		});
 	});
 
 	beforeEach(function() {
@@ -64,30 +73,10 @@ describe('Test test via Slack', function() {
 	};
 
 	function setupNoTTLsRedis() {
-		var MockRedis = sinon.stub();
-		Redis.prototype.scanStream = () => {
-			var scan = {};
-			scan.on = (event, callback) => {
-				if (event === 'data'){
-					callback(['key1', 'key2']);
-				}
-				else {
-					callback();
-				}
-			};
-			return scan;
-		};
-		Redis.prototype.ttl = (key) => {
-			if (key === 'key1') {
-				return Promise.resolve(-1);
-			}
-			else {
-				return Promise.resolve(200);
-			}
-		};
-
-		var redis = new MockRedis();
-		return ttls.__set__('redis', redis);
+		var pipeline = redis.pipeline();
+		pipeline.set('foo', 'bar');
+		pipeline.set('name', 'nell', 'EX', 1000000);
+		return pipeline.exec();
 	};
 
 	context('slowlog', function() {
@@ -101,6 +90,19 @@ describe('Test test via Slack', function() {
 
 	});
 
+	function waitForMessageQueue(room, len){
+		return sprinkles.eventually({
+			timeout: timeout
+		}, function() {
+			if (room.messages.length < len) {
+				throw new Error('too soon');
+			}
+		}).then(() => false).catch(() => true).then((success) => {
+			// Great.  Move on to tests
+			expect(room.messages.length).to.eql(len);
+		});
+	}
+
 	context('ttls', function() {
 		it('should retrieve ttls', function() {
 			return room.user.say('mimiron', '@hubot redis check ttls').then(() => {
@@ -113,7 +115,8 @@ describe('Test test via Slack', function() {
 			return room.user.say('mimiron', '@hubot redis monitor ttls').then(() => {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('monitor.ttls.prompt')]);
-				return room.user.say('mimiron', '1');
+				room.user.say('mimiron', '1');
+				return waitForMessageQueue(room, 2);
 			}).then(() => {
 				let rate = room.messages[room.messages.length - 2];
 				let current = room.messages[room.messages.length - 1];
@@ -123,6 +126,13 @@ describe('Test test via Slack', function() {
 			}).then(() => {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('redis.ttl.disable.monitor')]);
+			});
+		});
+
+		it('should delete keys without ttls', function() {
+			return room.user.say('mimiron', '@hubot redis delete nottls').then(() => {
+				let response = room.messages[room.messages.length - 1];
+				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('redis.deleted.number', 1)]);
 			});
 		});
 
