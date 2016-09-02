@@ -37,7 +37,7 @@ const timeout = 5000;
 
 // Passing arrow functions to mocha is discouraged: https://mochajs.org/#arrow-functions
 // return promises from mocha tests rather than calling done() - http://tobyho.com/2015/12/16/mocha-with-promises/
-describe('Test test via Slack', function() {
+describe('Test Redis commands via Regular Expression', function() {
 
 	let room;
 
@@ -106,6 +106,8 @@ describe('Test test via Slack', function() {
 	context('ttls', function() {
 		it('should retrieve ttls', function() {
 			return room.user.say('mimiron', '@hubot redis check ttls').then(() => {
+				return waitForMessageQueue(room, 2);
+			}).then(() => {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('redis.ttl.result', 1)]);
 			});
