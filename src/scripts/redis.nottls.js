@@ -39,10 +39,12 @@ var currentMonitor;
 const ALERT_FREQUENCY = 60 * 60 * 1000;
 var alertFrequency = ALERT_FREQUENCY;
 
-const NOTTLS = /redis check ttls/i;
-const MONITOR_NOTTLS = /redis monitor ttls/i;
-const MONITOR_CANCEL = /redis monitor cancel/i;
-
+const NOTTLS_REGEX = /redis check ttls/i;
+const MONITOR_NOTTLS_REGEX = /redis monitor ttls/i;
+const MONITOR_CANCEL_REGEX = /redis monitor cancel/i;
+const NOTTLS_ID = 'redis.nottls';
+const MONITOR_NOTTLS_ID = 'redis.monitor.nottls';
+const MONITOR_CANCEL_ID = 'redis.monitor.cancel';
 
 var redisNotConfigured = function(res, robot) {
 	// redis has not been configured
@@ -59,38 +61,38 @@ module.exports = (robot) => {
 	var switchBoard = new Conversation(robot);
 
 	// Natural Language match
-	robot.on('redis.nottls', (res, parameters) => {
-		robot.logger.debug(`${TAG}: redis.nottls - Natural Language match - res.message.text=${res.message.text}.`);
+	robot.on(NOTTLS_ID, (res) => {
+		robot.logger.debug(`${TAG}: ${NOTTLS_ID} - Natural Language match - res.message.text=${res.message.text}.`);
 		processNoTtlsWrapper(res);
 	});
 
 	// RegEx match
-	robot.respond(NOTTLS, {id: 'redis.nottls'}, function(res) {
-		robot.logger.debug(`${TAG}: redis.nottls - RegEx match - res.message.text=${res.message.text}.`);
+	robot.respond(NOTTLS_REGEX, {id: NOTTLS_ID}, function(res) {
+		robot.logger.debug(`${TAG}: ${NOTTLS_ID} - RegEx match - res.message.text=${res.message.text}.`);
 		processNoTtlsWrapper(res);
 	});
 
 	// Natural Language match
-	robot.on('redis.monitor.nottls', (res, parameters) => {
-		robot.logger.debug(`${TAG}: redis.monitor.nottls - Natural Language match - res.message.text=${res.message.text}.`);
+	robot.on(MONITOR_NOTTLS_ID, (res) => {
+		robot.logger.debug(`${TAG}: ${MONITOR_NOTTLS_ID} - Natural Language match - res.message.text=${res.message.text}.`);
 		processMonitorNoTtlsWrapper(res);
 	});
 
 	// RegEx match
-	robot.respond(MONITOR_NOTTLS, {id: 'redis.monitor.nottls'}, function(res) {
-		robot.logger.debug(`${TAG}: redis.monitor.nottls - RegEx match - res.message.text=${res.message.text}.`);
+	robot.respond(MONITOR_NOTTLS_REGEX, {id: MONITOR_NOTTLS_ID, function(res) {
+		robot.logger.debug(`${TAG}: ${MONITOR_NOTTLS_ID} - RegEx match - res.message.text=${res.message.text}.`);
 		processMonitorNoTtlsWrapper(res);
 	});
 
 	// Natural Language match
-	robot.on('redis.monitor.cancel', (res, parameters) => {
-		robot.logger.debug(`${TAG}: redis.monitor.cancel - Natural Language match - res.message.text=${res.message.text}.`);
+	robot.on(MONITOR_CANCEL_ID, (res, parameters) => {
+		robot.logger.debug(`${TAG}: ${MONITOR_CANCEL_ID} - Natural Language match - res.message.text=${res.message.text}.`);
 		processMonitorCancel(res);
 	});
 
 	// RegEx match
-	robot.respond(MONITOR_CANCEL, {id: 'redis.monitor.cancel'}, function(res) {
-		robot.logger.debug(`${TAG}: redis.monitor.cancel - RegEx match - res.message.text=${res.message.text}.`);
+	robot.respond(MONITOR_CANCEL_REGEX, {id: MONITOR_CANCEL_ID}, function(res) {
+		robot.logger.debug(`${TAG}: ${MONITOR_CANCEL_ID} - RegEx match - res.message.text=${res.message.text}.`);
 		processMonitorCancel(res);
 	});
 
