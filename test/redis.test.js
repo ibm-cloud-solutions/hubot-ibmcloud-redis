@@ -149,6 +149,20 @@ describe('Test Redis commands via Regular Expression', function() {
 			};
 			redisNotConfigured(room, room.robot);
 		});
+	});
 
+	context('help', function() {
+		it('should get the help', function() {
+			return room.user.say('mimiron', '@hubot redis help').then(() => {
+				return waitForMessageQueue(room, 2);
+			}).then(() => {
+				let response = room.messages[room.messages.length - 1];
+				expect(response).to.eql(['hubot', '@mimiron \nhubot redis check ttls - ' + i18n.__('help.redis.check.ttls')
+				+ '\nhubot redis delete nottls - ' + i18n.__('help.redis.delete.ttls')
+				+ '\nhubot redis monitor ttls - ' + i18n.__('help.redis.monitor.ttls')
+				+ '\nhubot redis monitor cancel - ' + i18n.__('help.redis.monitor.cancel')
+				+ '\nhubot redis slowlog - ' + i18n.__('help.redis.slowlog') + '\n']);
+			});
+		});
 	});
 });

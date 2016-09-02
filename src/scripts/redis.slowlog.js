@@ -27,27 +27,28 @@ var i18n = new (require('i18n-2'))({
 // At some point we need to toggle this setting based on some user input.
 i18n.setLocale('en');
 
-const SLOWLOG = /redis slowlog/i;
+const SLOWLOG_REGEX = /redis slowlog/i;
+const SLOWLOG_ID = 'redis.slowlog';
 
 module.exports = (robot) => {
 
 	// Natural Language match
-	robot.on('redis.slowlog', (res, parameters) => {
-		robot.logger.debug(`${TAG}: redis.slowlog - Natural Language match - res.message.text=${res.message.text}.`);
+	robot.on(SLOWLOG_ID, (res) => {
+		robot.logger.debug(`${TAG}: ${SLOWLOG_ID} - Natural Language match - res.message.text=${res.message.text}.`);
 		processSlowLog(res);
 	});
 
 	// RegEx match
-	robot.respond(SLOWLOG, {id: 'redis.slowlog'}, function(res) {
-		robot.logger.debug(`${TAG}: redis.slowlog - RegEx match - res.message.text=${res.message.text}.`);
+	robot.respond(SLOWLOG_REGEX, {id: SLOWLOG_ID}, function(res) {
+		robot.logger.debug(`${TAG}: ${SLOWLOG_ID} - RegEx match - res.message.text=${res.message.text}.`);
 		processSlowLog(res);
 	});
 
 	function processSlowLog(res) {
-		robot.logger.debug(`${TAG}: redis.slowlog - About to retrieve slowlog results.`);
+		robot.logger.debug(`${TAG}: About to retrieve slowlog results.`);
 		if (redis) {
 			redis.slowlog('GET', 10).then(function(result) {
-				robot.logger.debug(`${TAG}: redis.slowlog - Retrieved slowlog results.`);
+				robot.logger.debug(`${TAG}: Retrieved slowlog results.`);
 				var attachments = result.map(function(obj) {
 
 					var title = i18n.__('redis.slowlog.title', obj[0]);
@@ -55,7 +56,7 @@ module.exports = (robot) => {
 						title: title
 					};
 
-					robot.logger.debug(`${TAG}: redis.slowlog entry ` + obj[0]);
+					robot.logger.debug(`${TAG}: entry ` + obj[0]);
 					attachment.fields = [
 						{title: i18n.__('redis.slowlog.timestamp'), value: obj[1]},
 						{title: i18n.__('redis.slowlog.execution.time'), value: obj[2]},

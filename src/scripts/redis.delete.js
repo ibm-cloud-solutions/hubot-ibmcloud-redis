@@ -28,19 +28,19 @@ i18n.setLocale('en');
 
 var redis = require('../lib/redis.js')();
 
-const DELETE = /redis delete nottls/i;
-
+const DELETE_REGEX = /redis delete nottls/i;
+const DELETE_ID = 'redis.delete.nottls';
 module.exports = (robot) => {
 
 	// Natural Language match
-	robot.on('redis.delete.nottls', (res, parameters) => {
-		robot.logger.debug(`${TAG}: redis.delete.nottls - Natural Language match - res.message.text=${res.message.text}.`);
+	robot.on(DELETE_ID, (res) => {
+		robot.logger.debug(`${TAG}: ${DELETE_ID} - Natural Language match - res.message.text=${res.message.text}.`);
 		handleDelete(res);
 	});
 
 	// RegEx match
-	robot.respond(DELETE, {id: 'redis.delete.nottls'}, function(res) {
-		robot.logger.debug(`${TAG}: redis.delete.nottls - RegEx match - res.message.text=${res.message.text}.`);
+	robot.respond(DELETE_REGEX, {id: DELETE_ID}, function(res) {
+		robot.logger.debug(`${TAG}: ${DELETE_ID} - RegEx match - res.message.text=${res.message.text}.`);
 		handleDelete(res);
 	});
 

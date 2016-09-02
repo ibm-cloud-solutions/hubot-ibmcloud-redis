@@ -11,5 +11,10 @@
 	"redis.slowlog.title": "Entry %s",
 	"redis.slowlog.timestamp": "Timestamp",
 	"redis.slowlog.execution.time": "Microseconds for Execution",
-	"redis.slowlog.command": "Command"
+	"redis.slowlog.command": "Command",
+	"help.redis.check.ttls": "Checks the existing Redis keys for any without a set expiration.",
+	"help.redis.delete.ttls": "Deletes any existing Redis keys that do not have a set expiration.",
+	"help.redis.monitor.ttls": "Monitors the Redis server on an interval for keys without a set expiration.",
+	"help.redis.monitor.cancel": "Stops the monitoring of the Redis server.",
+	"help.redis.slowlog": "Lists all of the Redis commands reported in the slow log."
 }
