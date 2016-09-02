@@ -130,6 +130,7 @@ describe('Test test via Slack', function() {
 		});
 
 		it('should delete keys without ttls', function() {
+			this.timeout(15000);
 			return room.user.say('mimiron', '@hubot redis delete nottls').then(() => {
 				return waitForMessageQueue(room, 2);
 			}).then(() => {
