@@ -31,6 +31,16 @@
 				"Monitor non-expiring key growth",
 				"How are non-expiring keys changing over time?"
 			]
+		},
+		{
+			"class": "deletettls",
+			"description": "Delete all keys without TTLs",
+			"emittarget": "redis.delete.js",
+			"texts": [
+				"Can you delete all keys without TTLs?",
+				"Delete non-expiring keys",
+				"Can you delete non-expiring keys?"
+			]
 		}
 	]
 }
