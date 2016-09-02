@@ -116,7 +116,7 @@ describe('Test test via Slack', function() {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('monitor.ttls.prompt')]);
 				room.user.say('mimiron', '1');
-				return waitForMessageQueue(room, 4);
+				return waitForMessageQueue(room, 5);
 			}).then(() => {
 				let rate = room.messages[room.messages.length - 2];
 				let current = room.messages[room.messages.length - 1];
@@ -131,7 +131,7 @@ describe('Test test via Slack', function() {
 
 		it('should delete keys without ttls', function() {
 			return room.user.say('mimiron', '@hubot redis delete nottls').then(() => {
-				return waitForMessageQueue(room, 1);
+				return waitForMessageQueue(room, 2);
 			}).then(() => {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('redis.deleted.number', 1)]);
