@@ -116,7 +116,7 @@ describe('Test test via Slack', function() {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('monitor.ttls.prompt')]);
 				room.user.say('mimiron', '1');
-				return waitForMessageQueue(room, 2);
+				return waitForMessageQueue(room, 4);
 			}).then(() => {
 				let rate = room.messages[room.messages.length - 2];
 				let current = room.messages[room.messages.length - 1];
