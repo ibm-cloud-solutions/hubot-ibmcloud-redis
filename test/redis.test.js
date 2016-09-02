@@ -32,7 +32,7 @@ var i18n = new (require('i18n-2'))({
 i18n.setLocale('en');
 
 // Length of time to wait for a message
-const timeout = 1000;
+const timeout = 5000;
 
 
 // Passing arrow functions to mocha is discouraged: https://mochajs.org/#arrow-functions
