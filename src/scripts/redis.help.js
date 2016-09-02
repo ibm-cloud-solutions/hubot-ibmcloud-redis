@@ -41,7 +41,7 @@ var i18n = new (require('i18n-2'))({
 i18n.setLocale('en');
 
 const REDIS_HELP_REGEX = /redis\s+help/i;
-const REDIS_HELP_ID = 'redis.help'
+const REDIS_HELP_ID = 'redis.help';
 module.exports = (robot) => {
 	robot.on(REDIS_HELP_ID, (res) => {
 		robot.logger.debug(`${TAG}: ${REDIS_HELP_ID} Natural Language match.`);

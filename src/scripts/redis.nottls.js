@@ -79,7 +79,7 @@ module.exports = (robot) => {
 	});
 
 	// RegEx match
-	robot.respond(MONITOR_NOTTLS_REGEX, {id: MONITOR_NOTTLS_ID, function(res) {
+	robot.respond(MONITOR_NOTTLS_REGEX, {id: MONITOR_NOTTLS_ID}, function(res) {
 		robot.logger.debug(`${TAG}: ${MONITOR_NOTTLS_ID} - RegEx match - res.message.text=${res.message.text}.`);
 		processMonitorNoTtlsWrapper(res);
 	});
