@@ -2,6 +2,8 @@
 	"monitor.ttls.prompt": "How often would you like me to check for keys without Time To Live values (in hours)?",
 	"redis.not.configured": "I haven't been configured to work with Redis. The following environment variables should be set: HUBOT_IBMCLOUD_REDIS_HOST, HUBOT_IBMCLOUD_REDIS_PORT.",
 	"redis.deleted.number": "Deleted %s keys without TTLs",
+  "redis.deleted.success": "Deleted %s key[s]",
+	"redis.deleted.failure": "Failed to delete key",
 	"redis.error": "An error occurred while: %s",
 	"redis.ttl.percentage": "There were previously %s keys without TTLs.  This is a change of %s percent over the last %s hours.",
 	"redis.ttl.result": "There are currently %s keys without TTLs.",
@@ -14,7 +16,9 @@
 	"redis.slowlog.command": "Command",
 	"help.redis.check.ttls": "Checks the existing Redis keys for any without a set expiration.",
 	"help.redis.delete.ttls": "Deletes any existing Redis keys that do not have a set expiration.",
+	"help.redis.delete.key": "Deletes any existing Redis keys with the specified name.",
 	"help.redis.monitor.ttls": "Monitors the Redis server on an interval for keys without a set expiration.",
 	"help.redis.monitor.cancel": "Stops the monitoring of the Redis server.",
-	"help.redis.slowlog": "Lists all of the Redis commands reported in the slow log."
+	"help.redis.slowlog": "Lists all of the Redis commands reported in the slow log.",
+  "cognitive.parse.problem.delete": "I'm having problems understanding the name of your key. To delete a key use *redis delete key [keyname]*"
 }

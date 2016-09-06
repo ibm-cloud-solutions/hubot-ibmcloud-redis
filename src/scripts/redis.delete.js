@@ -29,7 +29,10 @@ i18n.setLocale('en');
 var redis = require('../lib/redis.js')();
 
 const DELETE_REGEX = /redis delete nottls/i;
+const DELETE_KEY_REGEX = /(redis\sdelete\skey)\s(.*)/i;
+
 const DELETE_ID = 'redis.delete.nottls';
+const DELETE_KEY_ID = 'redis.delete.key';
 module.exports = (robot) => {
 
 	// Natural Language match
@@ -43,6 +46,46 @@ module.exports = (robot) => {
 		robot.logger.debug(`${TAG}: ${DELETE_ID} - RegEx match - res.message.text=${res.message.text}.`);
 		handleDelete(res);
 	});
+
+	// Natural Language match
+	robot.on(DELETE_KEY_ID, (res, parameters) => {
+		robot.logger.debug(`${TAG}: ${DELETE_KEY_ID} - Natural Language match - res.message.text=${res.message.text}.`);
+		if (parameters && parameters.keyName) {
+			handleDeleteKey(res, parameters.keyName);
+		}
+		else {
+			robot.logger.error(`${TAG}: Error extracting Key Name from text [${res.message.text}].`);
+			let message = i18n.__('cognitive.parse.problem.delete');
+			robot.emit('ibmcloud.formatter', { response: res, message: message});
+		}
+	});
+
+	// RegEx match
+	robot.respond(DELETE_KEY_REGEX, {id: DELETE_KEY_ID}, function(res) {
+		robot.logger.debug(`${TAG}: ${DELETE_KEY_ID} - RegEx match - res.message.text=${res.message.text}.`);
+		handleDeleteKey(res, res.match[2]);
+	});
+
+	function handleDeleteKey(res, keyName) {
+		return redis.del(keyName).then(function(result) {
+			if (result === 1) {
+				// successfully deleted key
+				var message = i18n.__('redis.deleted.success', result);
+				robot.emit('ibmcloud.formatter', {
+					response: res,
+					message: message
+				});
+			}
+			else {
+				// failure.  deleted an unexpected number of keys -- result
+				var message2 = i18n.__('redis.deleted.failure', result);
+				robot.emit('ibmcloud.formatter', {
+					response: res,
+					message: message2
+				});
+			}
+		});
+	}
 
 	function handleDelete(res) {
 		deleteKeys().then(function(numberDeleted) {
