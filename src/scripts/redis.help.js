@@ -58,6 +58,7 @@ module.exports = (robot) => {
 
 		let help = robot.name + ' redis check ttls - ' + i18n.__('help.redis.check.ttls') + '\n'
 			+ robot.name + ' redis delete nottls - ' + i18n.__('help.redis.delete.ttls') + '\n'
+			+ robot.name + ' redis delete key [keyname]- ' + i18n.__('help.redis.delete.key') + '\n'
 			+ robot.name + ' redis monitor ttls - ' + i18n.__('help.redis.monitor.ttls') + '\n'
 			+ robot.name + ' redis monitor cancel - ' + i18n.__('help.redis.monitor.cancel') + '\n'
 			+ robot.name + ' redis slowlog - ' + i18n.__('help.redis.slowlog') + '\n';

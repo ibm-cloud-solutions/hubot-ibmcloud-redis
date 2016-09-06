@@ -41,6 +41,23 @@
 				"Delete non-expiring keys",
 				"Can you delete non-expiring keys?"
 			]
+		},
+		{
+			"class": "deletekey",
+			"emittarget": "redis.delete.js",
+			"description": "Delete a redis key",
+			"texts": [
+				"Remove redis key",
+				"Delete redis key"
+			],
+				"parameters" : [
+				{
+						"name": "keyname",
+						"title": "key name",
+						"type": "entity",
+						"prompt": "OK. What is the name of the key you want to delete?"
+				}
+				]
 		}
 	]
 }

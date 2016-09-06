@@ -141,6 +141,17 @@ describe('Test Redis commands via Regular Expression', function() {
 			});
 		});
 
+		it('should delete specific key', function() {
+			this.timeout(15000);
+			return room.user.say('mimiron', '@hubot redis delete key name').then(() => {
+				return waitForMessageQueue(room, 2);
+			}).then(() => {
+				let response = room.messages[room.messages.length - 1];
+				expect(response).to.eql(['hubot', '@mimiron ' + i18n.__('redis.deleted.success', 1)]);
+			});
+		});
+
+
 		it('should catch emit', function(done) {
 			let redisNotConfigured = ttls.__get__('redisNotConfigured');
 			room.reply = (message) => {
@@ -159,6 +170,7 @@ describe('Test Redis commands via Regular Expression', function() {
 				let response = room.messages[room.messages.length - 1];
 				expect(response).to.eql(['hubot', '@mimiron \nhubot redis check ttls - ' + i18n.__('help.redis.check.ttls')
 				+ '\nhubot redis delete nottls - ' + i18n.__('help.redis.delete.ttls')
+				+ '\nhubot redis delete key [keyname]- ' + i18n.__('help.redis.delete.key')
 				+ '\nhubot redis monitor ttls - ' + i18n.__('help.redis.monitor.ttls')
 				+ '\nhubot redis monitor cancel - ' + i18n.__('help.redis.monitor.cancel')
 				+ '\nhubot redis slowlog - ' + i18n.__('help.redis.slowlog') + '\n']);
