@@ -9,15 +9,15 @@
 const utils = require('hubot-ibmcloud-utils').utils;
 const Conversation = require('hubot-conversation');
 
-var path = require('path');
-var TAG = path.basename(__filename);
+const path = require('path');
+const TAG = path.basename(__filename);
 
 // --------------------------------------------------------------
 // i18n (internationalization)
 // It will read from a peer messages.json file.  Later, these
 // messages can be referenced throughout the module.
 // --------------------------------------------------------------
-var i18n = new (require('i18n-2'))({
+const i18n = new (require('i18n-2'))({
 	locales: ['en'],
 	extension: '.json',
 	// Add more languages to the list of locales when the files are created.
@@ -30,14 +30,14 @@ var i18n = new (require('i18n-2'))({
 i18n.setLocale('en');
 
 
-var redis = require('../lib/redis.js')();
+const redis = require('../lib/redis.js')();
 
-var currentResponse;
-var previousKeyNumber;
-var currentMonitor;
+let currentResponse;
+let previousKeyNumber;
+let currentMonitor;
 
 const ALERT_FREQUENCY = 60 * 60 * 1000;
-var alertFrequency = ALERT_FREQUENCY;
+let alertFrequency = ALERT_FREQUENCY;
 
 const NOTTLS_REGEX = /redis check ttls/i;
 const MONITOR_NOTTLS_REGEX = /redis monitor ttls/i;
@@ -46,9 +46,9 @@ const NOTTLS_ID = 'redis.nottls';
 const MONITOR_NOTTLS_ID = 'redis.monitor.nottls';
 const MONITOR_CANCEL_ID = 'redis.monitor.cancel';
 
-var redisNotConfigured = function(res, robot) {
+let redisNotConfigured = function(res, robot) {
 	// redis has not been configured
-	var message = i18n.__('redis.not.configured');
+	let message = i18n.__('redis.not.configured');
 	robot.logger.error(`${TAG}: ${message}`);
 	robot.emit('ibmcloud.formatter', {
 		response: res,
@@ -58,7 +58,7 @@ var redisNotConfigured = function(res, robot) {
 
 module.exports = (robot) => {
 
-	var switchBoard = new Conversation(robot);
+	let switchBoard = new Conversation(robot);
 
 	// Natural Language match
 	robot.on(NOTTLS_ID, (res) => {
@@ -101,14 +101,14 @@ module.exports = (robot) => {
 			clearTimeout(currentMonitor);
 			currentMonitor = undefined;
 			previousKeyNumber = undefined;
-			var message = i18n.__('redis.ttl.disable.monitor');
+			let message = i18n.__('redis.ttl.disable.monitor');
 			robot.emit('ibmcloud.formatter', {
 				response: res,
 				message: message
 			});
 		}
 		else {
-			var message2 = i18n.__('redis.ttl.disable.no.monitor');
+			let message2 = i18n.__('redis.ttl.disable.no.monitor');
 			robot.emit('ibmcloud.formatter', {
 				response: res,
 				message: message2
@@ -120,7 +120,7 @@ module.exports = (robot) => {
 		// ask how long they would like the monitoring period to be
 		let prompt = i18n.__('monitor.ttls.prompt');
 		utils.getExpectedResponse(res, robot, switchBoard, prompt, /(.*)/i).then((response) => {
-			var selection = parseInt(response.match[1], 10);
+			let selection = parseInt(response.match[1], 10);
 			processMonitorNoTtls(res, selection);
 		});
 	}
@@ -138,7 +138,7 @@ module.exports = (robot) => {
 				alertFrequency = frequency * ALERT_FREQUENCY;
 			}
 
-			var message = i18n.__('redis.ttl.enable.monitor', alertFrequency / ALERT_FREQUENCY);
+			let message = i18n.__('redis.ttl.enable.monitor', alertFrequency / ALERT_FREQUENCY);
 			robot.emit('ibmcloud.formatter', {
 				response: currentResponse,
 				message: message
@@ -160,7 +160,7 @@ module.exports = (robot) => {
 			}
 
 			processNoTtls(res).then(function(result) {
-				var message = i18n.__('redis.ttl.result', result);
+				let message = i18n.__('redis.ttl.result', result);
 				robot.emit('ibmcloud.formatter', {
 					response: res,
 					message: message
@@ -169,7 +169,7 @@ module.exports = (robot) => {
 				if (isMonitoring) {
 					if (previousKeyNumber) {
 						let percent = (result - previousKeyNumber) / 100;
-						var msg = i18n.__('redis.ttl.percentage', previousKeyNumber, percent, (alertFrequency / ALERT_FREQUENCY));
+						let msg = i18n.__('redis.ttl.percentage', previousKeyNumber, percent, (alertFrequency / ALERT_FREQUENCY));
 						robot.emit('ibmcloud.formatter', {
 							response: res,
 							message: msg
@@ -179,7 +179,7 @@ module.exports = (robot) => {
 				}
 			}).catch(function(err) {
 				let errStr = JSON.stringify(err);
-				var message = i18n.__('redis.error', errStr);
+				let message = i18n.__('redis.error', errStr);
 				robot.emit('ibmcloud.formatter', {
 					response: res,
 					message: message
@@ -194,12 +194,12 @@ module.exports = (robot) => {
 
 
 	function processNoTtls(res) {
-		var count = 0;
-		var stream = redis.scanStream();
-		var promises = [];
+		let count = 0;
+		let stream = redis.scanStream();
+		let promises = [];
 
 		stream.on('data', function(resultKeys) {
-			for (var i = 0; i < resultKeys.length; i++) {
+			for (let i = 0; i < resultKeys.length; i++) {
 				promises.push(redis.ttl(resultKeys[i]));
 			}
 		});
@@ -210,7 +210,7 @@ module.exports = (robot) => {
 		return new Promise(function(resolve, reject) {
 			stream.on('end', function() {
 				Promise.all(promises).then(function(arrayOfResults) {
-					for (var i = 0; i < arrayOfResults.length; i++) {
+					for (let i = 0; i < arrayOfResults.length; i++) {
 						if (arrayOfResults[i] === -1) {
 							count++;
 						}

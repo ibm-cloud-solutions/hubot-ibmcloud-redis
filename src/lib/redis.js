@@ -6,16 +6,16 @@
   */
 'use strict';
 
-var Redis = require('ioredis');
+const Redis = require('ioredis');
 const REDIS_HOST = process.env.HUBOT_IBMCLOUD_REDIS_HOST;
 const REDIS_PORT = process.env.HUBOT_IBMCLOUD_REDIS_PORT;
 const REDIS_PASSWORD = process.env.HUBOT_IBMCLOUD_REDIS_PASSWORD;
 
 
 module.exports = () => {
-	var redis;
+	let redis;
 	if (REDIS_HOST && REDIS_PORT) {
-		var redisConfig = {
+		let redisConfig = {
 			port: REDIS_PORT,
 			host: REDIS_HOST
 		};

@@ -6,20 +6,20 @@
   */
 'use strict';
 
-var Redis = require('ioredis');
+const Redis = require('ioredis');
 const Helper = require('hubot-test-helper');
 const helper = new Helper('../src/scripts');
 const sprinkles = require('mocha-sprinkles');
-var rewire = require('rewire');
-var sinon = require('sinon');
+const rewire = require('rewire');
+const sinon = require('sinon');
 const expect = require('chai').expect;
 
-var redis = require('../src/lib/redis.js')();
+const redis = require('../src/lib/redis.js')();
 
-var slowLog = rewire('../src/scripts/redis.slowlog.js');
-var ttls = rewire('../src/scripts/redis.nottls.js');
+const slowLog = rewire('../src/scripts/redis.slowlog.js');
+const ttls = rewire('../src/scripts/redis.nottls.js');
 
-var i18n = new (require('i18n-2'))({
+const i18n = new (require('i18n-2'))({
 	locales: ['en'],
 	extension: '.json',
 	// Add more languages to the list of locales when the files are created.
@@ -66,14 +66,14 @@ describe('Test Redis commands via Regular Expression', function() {
 	});
 
 	function setupSlowLogsRedis() {
-		var MockRedis = sinon.stub();
+		let MockRedis = sinon.stub();
 		Redis.prototype.slowlog = sinon.stub().returns(Promise.resolve([[1, 1471964017, 1099, ['info']]]));
-		var redis = new MockRedis();
+		let redis = new MockRedis();
 		return slowLog.__set__('redis', redis);
 	};
 
 	function setupNoTTLsRedis() {
-		var pipeline = redis.pipeline();
+		let pipeline = redis.pipeline();
 		pipeline.set('foo', 'bar');
 		pipeline.set('name', 'nell', 'EX', 1000000);
 		return pipeline.exec();
