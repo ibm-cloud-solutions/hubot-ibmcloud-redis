@@ -6,15 +6,15 @@
   */
 'use strict';
 
-var path = require('path');
-var TAG = path.basename(__filename);
+const path = require('path');
+const TAG = path.basename(__filename);
 
 // --------------------------------------------------------------
 // i18n (internationalization)
 // It will read from a peer messages.json file.  Later, these
 // messages can be referenced throughout the module.
 // --------------------------------------------------------------
-var i18n = new (require('i18n-2'))({
+const i18n = new (require('i18n-2'))({
 	locales: ['en'],
 	extension: '.json',
 	// Add more languages to the list of locales when the files are created.
@@ -26,7 +26,7 @@ var i18n = new (require('i18n-2'))({
 // At some point we need to toggle this setting based on some user input.
 i18n.setLocale('en');
 
-var redis = require('../lib/redis.js')();
+const redis = require('../lib/redis.js')();
 
 const DELETE_REGEX = /redis delete nottls/i;
 const DELETE_KEY_REGEX = /(redis\sdelete\skey)\s(.*)/i;
@@ -70,7 +70,7 @@ module.exports = (robot) => {
 		return redis.del(keyName).then(function(result) {
 			if (result === 1) {
 				// successfully deleted key
-				var message = i18n.__('redis.deleted.success', result);
+				let message = i18n.__('redis.deleted.success', result);
 				robot.emit('ibmcloud.formatter', {
 					response: res,
 					message: message
@@ -78,7 +78,7 @@ module.exports = (robot) => {
 			}
 			else {
 				// failure.  deleted an unexpected number of keys -- result
-				var message2 = i18n.__('redis.deleted.failure', result);
+				let message2 = i18n.__('redis.deleted.failure', result);
 				robot.emit('ibmcloud.formatter', {
 					response: res,
 					message: message2
@@ -89,7 +89,7 @@ module.exports = (robot) => {
 
 	function handleDelete(res) {
 		deleteKeys().then(function(numberDeleted) {
-			var message = i18n.__('redis.deleted.number', numberDeleted);
+			let message = i18n.__('redis.deleted.number', numberDeleted);
 			robot.emit('ibmcloud.formatter', {
 				response: res,
 				message: message
@@ -110,11 +110,11 @@ module.exports = (robot) => {
 	}
 
 	function deleteKeys() {
-		var stream = redis.scanStream();
-		var promises = [];
+		let stream = redis.scanStream();
+		let promises = [];
 
 		stream.on('data', function(resultKeys) {
-			for (var i = 0; i < resultKeys.length; i++) {
+			for (let i = 0; i < resultKeys.length; i++) {
 				promises.push(deleteIfNoTtl(resultKeys[i]));
 			}
 		});
@@ -125,8 +125,8 @@ module.exports = (robot) => {
 		return new Promise(function(resolve, reject) {
 			stream.on('end', function() {
 				Promise.all(promises).then(function(arrayOfResults) {
-					var count = 0;
-					for (var i = 0; i < arrayOfResults.length; i++) {
+					let count = 0;
+					for (let i = 0; i < arrayOfResults.length; i++) {
 						count += arrayOfResults[i];
 					}
 					resolve(count);
