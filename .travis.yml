@@ -11,3 +11,6 @@ script:
 notifications:
   slack: ${SLACK_TOKEN}
   webhooks: http://cloud-solutions-travis.mybluemix.net/notifications
+branches:
+  only:
+  - master
