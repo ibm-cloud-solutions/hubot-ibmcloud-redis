@@ -22,9 +22,9 @@
     "bluemix",
     "cloud",
     "slack",
-		"redis",
-		"ibm",
-		"ibm cloud"
+    "redis",
+    "ibm",
+    "ibm cloud"
   ],
   "author": "ibm-cloud-solutions",
   "license": "Apache-2.0",
@@ -51,7 +51,11 @@
     "sinon": "^1.17.5"
   },
   "peerDependencies": {
-    "hubot": "^2.19.0"
+    "hubot": "^2.19.0",
+    "hubot-conversation": "^1.1.1",
+    "hubot-ibmcloud-cognitive-lib": ">=0.0.19",
+    "hubot-ibmcloud-utils": ">=0.0.8",
+    "i18n-2": "^0.6.3"
   },
   "engines": {
     "node": ">= 4.2.0"
@@ -61,10 +65,6 @@
     "index.js"
   ],
   "dependencies": {
-		"hubot-ibmcloud-cognitive-lib": ">=0.0.19",
-		"ioredis": "^2.3.0",
-		"hubot-ibmcloud-utils": ">=0.0.8",
-		"hubot-conversation": "^1.1.1",
-		"i18n-2": "^0.6.3"
-	}
+    "ioredis": "^2.3.0"
+  }
 }
