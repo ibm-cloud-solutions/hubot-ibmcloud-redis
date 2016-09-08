@@ -30,6 +30,7 @@ i18n.setLocale('en');
 
 const SLOWLOG_REGEX = /redis slowlog/i;
 const SLOWLOG_ID = 'redis.slowlog';
+const SLOWLOG_THRESHOLD = 10;
 
 module.exports = (robot) => {
 
@@ -48,28 +49,37 @@ module.exports = (robot) => {
 	function processSlowLog(res) {
 		robot.logger.debug(`${TAG}: About to retrieve slowlog results.`);
 		if (redis) {
-			redis.slowlog('GET', 10).then(function(result) {
+			redis.slowlog('GET', SLOWLOG_THRESHOLD).then(function(result) {
 				robot.logger.debug(`${TAG}: Retrieved slowlog results.`);
-				let attachments = result.map(function(obj) {
+				if (result && Array.isArray(result) && result.length > 0) {
+					let attachments = result.map(function(obj) {
+						let title = i18n.__('redis.slowlog.title', obj[0]);
+						const attachment = {
+							title: title
+						};
 
-					let title = i18n.__('redis.slowlog.title', obj[0]);
-					const attachment = {
-						title: title
-					};
+						robot.logger.debug(`${TAG}: entry ` + obj[0]);
+						attachment.fields = [
+							{title: i18n.__('redis.slowlog.timestamp'), value: obj[1]},
+							{title: i18n.__('redis.slowlog.execution.time'), value: obj[2]},
+							{title: i18n.__('redis.slowlog.command'), value: JSON.stringify(obj[3])}
+						];
 
-					robot.logger.debug(`${TAG}: entry ` + obj[0]);
-					attachment.fields = [
-						{title: i18n.__('redis.slowlog.timestamp'), value: obj[1]},
-						{title: i18n.__('redis.slowlog.execution.time'), value: obj[2]},
-						{title: i18n.__('redis.slowlog.command'), value: JSON.stringify(obj[3])}
-					];
-
-					return attachment;
-				});
-				robot.emit('ibmcloud.formatter', {
-					response: res, attachments: attachments
-				});
-				activity.emitBotActivity(robot, res, {activity_id: SLOWLOG_ID});
+						return attachment;
+					});
+					robot.emit('ibmcloud.formatter', {
+						response: res, attachments: attachments
+					});
+					activity.emitBotActivity(robot, res, {activity_id: SLOWLOG_ID});
+				}
+				else {
+					let message = i18n.__('redis.slowlog.not.found', '' + SLOWLOG_THRESHOLD);
+					robot.logger.error(`${TAG}: ${message}`);
+					robot.emit('ibmcloud.formatter', {
+						response: res,
+						message: message
+					});
+				}
 			});
 		}
 		else {
