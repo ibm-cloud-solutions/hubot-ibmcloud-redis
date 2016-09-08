@@ -8,6 +8,7 @@
 
 const path = require('path');
 const TAG = path.basename(__filename);
+const activity = require('hubot-ibmcloud-activity-emitter');
 
 // --------------------------------------------------------------
 // i18n (internationalization)
@@ -75,6 +76,7 @@ module.exports = (robot) => {
 					response: res,
 					message: message
 				});
+				activity.emitBotActivity(robot, res, {activity_id: DELETE_KEY_ID});
 			}
 			else {
 				// failure.  deleted an unexpected number of keys -- result
@@ -94,6 +96,7 @@ module.exports = (robot) => {
 				response: res,
 				message: message
 			});
+			activity.emitBotActivity(robot, res, {activity_id: DELETE_ID});
 		});
 	}
 
