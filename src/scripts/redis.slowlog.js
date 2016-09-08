@@ -8,6 +8,7 @@
 
 const path = require('path');
 const TAG = path.basename(__filename);
+const activity = require('hubot-ibmcloud-activity-emitter');
 let redis = require('../lib/redis.js')();
 
 // --------------------------------------------------------------
@@ -68,6 +69,7 @@ module.exports = (robot) => {
 				robot.emit('ibmcloud.formatter', {
 					response: res, attachments: attachments
 				});
+				activity.emitBotActivity(robot, res, {activity_id: SLOWLOG_ID});
 			});
 		}
 		else {

@@ -6,11 +6,11 @@
   */
 'use strict';
 
-const utils = require('hubot-ibmcloud-utils').utils;
-const Conversation = require('hubot-conversation');
-
 const path = require('path');
 const TAG = path.basename(__filename);
+const Conversation = require('hubot-conversation');
+const activity = require('hubot-ibmcloud-activity-emitter');
+const utils = require('hubot-ibmcloud-utils').utils;
 
 // --------------------------------------------------------------
 // i18n (internationalization)
@@ -106,6 +106,7 @@ module.exports = (robot) => {
 				response: res,
 				message: message
 			});
+			activity.emitBotActivity(robot, res, {activity_id: MONITOR_CANCEL_ID});
 		}
 		else {
 			let message2 = i18n.__('redis.ttl.disable.no.monitor');
@@ -176,6 +177,10 @@ module.exports = (robot) => {
 						});
 					}
 					previousKeyNumber = result;
+					activity.emitBotActivity(robot, res, {activity_id: MONITOR_NOTTLS_ID});
+				}
+				else {
+					activity.emitBotActivity(robot, res, {activity_id: NOTTLS_ID});
 				}
 			}).catch(function(err) {
 				let errStr = JSON.stringify(err);
