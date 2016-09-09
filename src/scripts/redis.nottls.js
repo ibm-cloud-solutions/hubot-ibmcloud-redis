@@ -119,8 +119,6 @@ module.exports = (robot) => {
 
 	function processMonitorNoTtlsWrapper(res) {
 		if (currentMonitor) {
-			// return, I'm already monitoring so I can't help you
-			// this is a stopgap until we can get true multi-user support in place
 			let warning = i18n.__('monitor.ttls.busy');
 			robot.emit('ibmcloud.formatter', {
 				response: res,

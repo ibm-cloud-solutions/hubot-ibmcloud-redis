@@ -39,15 +39,18 @@ let currentResponse;
 
 module.exports = (robot) => {
 
-	redis.on('error', function(err) {
-		if (currentResponse) {
-			let message = i18n.__('redis.error', err);
-			robot.emit('ibmcloud.formatter', {
-				response: currentResponse,
-				message: message
-			});
-		}
-	});
+	if (redis) {
+		redis.on('error', function(err) {
+			if (currentResponse) {
+				let message = i18n.__('redis.error', err);
+				robot.emit('ibmcloud.formatter', {
+					response: currentResponse,
+					message: message
+				});
+			}
+		});
+	}
+
 	// Natural Language match
 	robot.on(DELETE_ID, (res) => {
 		robot.logger.debug(`${TAG}: ${DELETE_ID} - Natural Language match - res.message.text=${res.message.text}.`);

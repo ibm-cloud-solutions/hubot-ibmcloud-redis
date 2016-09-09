@@ -36,15 +36,17 @@ let lastResponse;
 
 module.exports = (robot) => {
 
-	redis.on('error', function(err) {
-		if (lastResponse) {
-			let message = i18n.__('redis.error', err);
-			robot.emit('ibmcloud.formatter', {
-				response: lastResponse,
-				message: message
-			});
-		}
-	});
+	if (redis) {
+		redis.on('error', function(err) {
+			if (lastResponse) {
+				let message = i18n.__('redis.error', err);
+				robot.emit('ibmcloud.formatter', {
+					response: lastResponse,
+					message: message
+				});
+			}
+		});
+	}
 
 	// Natural Language match
 	robot.on(SLOWLOG_ID, (res) => {
