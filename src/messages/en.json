@@ -15,7 +15,7 @@
 	"redis.slowlog.timestamp": "Timestamp",
 	"redis.slowlog.execution.time": "Microseconds for Execution",
 	"redis.slowlog.command": "Command",
-	"redis.slowlog.not.found": "No commands were found in the slow logs for the given threshold of %s microseconds.",
+	"redis.slowlog.not.found": "No commands were found in the slow logs for the given threshold of %s commands.",
 	"help.redis.check.ttls": "Checks the existing Redis keys for any without a set expiration.",
 	"help.redis.delete.ttls": "Deletes any existing Redis keys that do not have a set expiration.",
 	"help.redis.delete.key": "Deletes any existing Redis keys with the specified name.",
