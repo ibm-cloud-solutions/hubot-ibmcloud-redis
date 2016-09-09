@@ -87,7 +87,7 @@ module.exports = (robot) => {
 					activity.emitBotActivity(robot, res, {activity_id: SLOWLOG_ID});
 				}
 				else {
-					let message = i18n.__('redis.slowlog.not.found', '' + SLOWLOG_THRESHOLD);
+					let message = i18n.__('redis.slowlog.not.found');
 					robot.logger.error(`${TAG}: ${message}`);
 					robot.emit('ibmcloud.formatter', {
 						response: res,
