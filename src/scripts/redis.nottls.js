@@ -117,12 +117,23 @@ module.exports = (robot) => {
 	}
 
 	function processMonitorNoTtlsWrapper(res) {
-		// ask how long they would like the monitoring period to be
-		let prompt = i18n.__('monitor.ttls.prompt');
-		utils.getExpectedResponse(res, robot, switchBoard, prompt, /(.*)/i).then((response) => {
-			let selection = parseInt(response.match[1], 10);
-			processMonitorNoTtls(res, selection);
-		});
+		if (currentMonitor) {
+			// return, I'm already monitoring so I can't help you
+			// this is a stopgap until we can get true multi-user support in place
+			let warning = i18n.__('monitor.ttls.busy');
+			robot.emit('ibmcloud.formatter', {
+				response: res,
+				message: warning
+			});
+		}
+		else {
+			// ask how long they would like the monitoring period to be
+			let prompt = i18n.__('monitor.ttls.prompt');
+			utils.getExpectedResponse(res, robot, switchBoard, prompt, /(.*)/i).then((response) => {
+				let selection = parseInt(response.match[1], 10);
+				processMonitorNoTtls(res, selection);
+			});
+		}
 	}
 
 	function processMonitorNoTtls(res, frequency) {
@@ -144,7 +155,7 @@ module.exports = (robot) => {
 				message: message
 			});
 
-			currentMonitor = setInterval(processMonitorNoTtls, alertFrequency);
+			currentMonitor = setTimeout(processMonitorNoTtls, alertFrequency);
 		}
 		else {
 			// redis has not been configured

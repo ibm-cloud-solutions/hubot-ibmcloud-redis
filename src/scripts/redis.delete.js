@@ -33,23 +33,38 @@ const DELETE_KEY_REGEX = /(redis\sdelete\skey)\s(.*)/i;
 
 const DELETE_ID = 'redis.delete.nottls';
 const DELETE_KEY_ID = 'redis.delete.key';
+
+let currentResponse;
+
 module.exports = (robot) => {
 
+	redis.on('error', function(err) {
+		if (currentResponse) {
+			let message = i18n.__('redis.error', err);
+			robot.emit('ibmcloud.formatter', {
+				response: currentResponse,
+				message: message
+			});
+		}
+	});
 	// Natural Language match
 	robot.on(DELETE_ID, (res) => {
 		robot.logger.debug(`${TAG}: ${DELETE_ID} - Natural Language match - res.message.text=${res.message.text}.`);
+		currentResponse = res;
 		handleDelete(res);
 	});
 
 	// RegEx match
 	robot.respond(DELETE_REGEX, {id: DELETE_ID}, function(res) {
 		robot.logger.debug(`${TAG}: ${DELETE_ID} - RegEx match - res.message.text=${res.message.text}.`);
+		currentResponse = res;
 		handleDelete(res);
 	});
 
 	// Natural Language match
 	robot.on(DELETE_KEY_ID, (res, parameters) => {
 		robot.logger.debug(`${TAG}: ${DELETE_KEY_ID} - Natural Language match - res.message.text=${res.message.text}.`);
+		currentResponse = res;
 		if (parameters && parameters.keyName) {
 			handleDeleteKey(res, parameters.keyName);
 		}
@@ -63,6 +78,7 @@ module.exports = (robot) => {
 	// RegEx match
 	robot.respond(DELETE_KEY_REGEX, {id: DELETE_KEY_ID}, function(res) {
 		robot.logger.debug(`${TAG}: ${DELETE_KEY_ID} - RegEx match - res.message.text=${res.message.text}.`);
+		currentResponse = res;
 		handleDeleteKey(res, res.match[2]);
 	});
 
