@@ -32,16 +32,30 @@ const SLOWLOG_REGEX = /redis slowlog/i;
 const SLOWLOG_ID = 'redis.slowlog';
 const SLOWLOG_THRESHOLD = 10;
 
+let lastResponse;
+
 module.exports = (robot) => {
+
+	redis.on('error', function(err) {
+		if (lastResponse) {
+			let message = i18n.__('redis.error', err);
+			robot.emit('ibmcloud.formatter', {
+				response: lastResponse,
+				message: message
+			});
+		}
+	});
 
 	// Natural Language match
 	robot.on(SLOWLOG_ID, (res) => {
+		lastResponse = res;
 		robot.logger.debug(`${TAG}: ${SLOWLOG_ID} - Natural Language match - res.message.text=${res.message.text}.`);
 		processSlowLog(res);
 	});
 
 	// RegEx match
 	robot.respond(SLOWLOG_REGEX, {id: SLOWLOG_ID}, function(res) {
+		lastResponse = res;
 		robot.logger.debug(`${TAG}: ${SLOWLOG_ID} - RegEx match - res.message.text=${res.message.text}.`);
 		processSlowLog(res);
 	});

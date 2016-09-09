@@ -1,5 +1,6 @@
 {
 	"monitor.ttls.prompt": "How often would you like me to check for keys without Time To Live values (in hours)?",
+	"monitor.ttls.busy": "I'm sorry.  I'm already monitoring so I can't start another monitoring job.",
 	"redis.not.configured": "I haven't been configured to work with Redis. The following environment variables should be set: HUBOT_IBMCLOUD_REDIS_HOST, HUBOT_IBMCLOUD_REDIS_PORT.",
 	"redis.deleted.number": "Deleted %s keys without TTLs",
 	"redis.deleted.success": "Deleted %s key[s]",
