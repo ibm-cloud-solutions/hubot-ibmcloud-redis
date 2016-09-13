@@ -1,6 +1,6 @@
 {
   "name": "hubot-ibmcloud-redis",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "hubot-ibmcloud-redis",
   "main": "index.js",
   "repository": {
