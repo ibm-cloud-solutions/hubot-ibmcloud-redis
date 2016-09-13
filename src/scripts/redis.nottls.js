@@ -180,7 +180,7 @@ module.exports = (robot) => {
 
 				if (isMonitoring) {
 					if (previousKeyNumber) {
-						let percent = (result - previousKeyNumber) / 100;
+						let percent = ((result - previousKeyNumber) / previousKeyNumber) * 100;
 						let msg = i18n.__('redis.ttl.percentage', previousKeyNumber, percent, (alertFrequency / ALERT_FREQUENCY));
 						robot.emit('ibmcloud.formatter', {
 							response: res,
